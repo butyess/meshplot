@@ -15,7 +15,9 @@ class Viewer():
         self._light2 = p3s.AmbientLight(intensity=0.5)
         self._cam = p3s.PerspectiveCamera(position=[0, 0, 1], lookAt=[0, 0, 0], fov=self.__s["fov"],
                                      aspect=self.__s["width"]/self.__s["height"], children=[self._light])
+        self._cam.up = self.__s["up"]
         self._orbit = p3s.OrbitControls(controlling=self._cam)
+        self._orbit.up = self.__s["up"]
         self._scene = p3s.Scene(children=[self._cam, self._light2], background=self.__s["background"])#"#4c4c80"
         self._renderer = p3s.Renderer(camera=self._cam, scene = self._scene, controls=[self._orbit],
                     width=self.__s["width"], height=self.__s["height"], antialias=self.__s["antialias"])
@@ -37,7 +39,7 @@ class Viewer():
 
     def __update_settings(self, settings={}):
         sett = {"width": 600, "height": 600, "antialias": True, "scale": 1.5, "background": "#ffffff",
-                "fov": 30}
+                "fov": 30, "up": [0, 1, 0]}
         for k in settings:
             sett[k] = settings[k]
         self.__s = sett
@@ -88,10 +90,22 @@ class Viewer():
         diag = np.linalg.norm(ma-mi)
         mean = ((ma - mi) / 2 + mi).tolist()
         scale = self.__s["scale"] * (diag)
+        up = np.array(self.__s["up"], dtype=float)
+        up = up / np.linalg.norm(up)
+        if abs(np.dot(up, [0, 0, 1])) < 0.99:
+            ref = np.array([0, 0, 1], dtype=float)
+        else:
+            ref = np.array([0, 1, 0], dtype=float)
+        right = np.cross(up, ref)
+        right /= np.linalg.norm(right)
+        forward = np.cross(up, right)
+        forward /= np.linalg.norm(forward)
+        cam_pos = (np.array(mean) - forward * scale).tolist()
+
         self._orbit.target = mean
         self._cam.lookAt(mean)
-        self._cam.position = [mean[0], mean[1], mean[2]+scale]
-        self._light.position = [mean[0], mean[1], mean[2]+scale]
+        self._cam.position = cam_pos
+        self._light.position = cam_pos
 
         self._orbit.exec_three_obj_method('update')
         self._cam.exec_three_obj_method('updateProjectionMatrix')
@@ -465,10 +479,22 @@ class Viewer():
             v -= mean
 
         scale = self.__s["scale"] * (diag)
+        up = np.array(self.__s["up"], dtype=float)
+        up = up / np.linalg.norm(up)
+        if abs(np.dot(up, [0, 0, 1])) < 0.99:
+            ref = np.array([0, 0, 1], dtype=float)
+        else:
+            ref = np.array([0, 1, 0], dtype=float)
+        right = np.cross(up, ref)
+        right /= np.linalg.norm(right)
+        forward = np.cross(up, right)
+        forward /= np.linalg.norm(forward)
+        cam_pos = (-forward * scale).tolist()
+
         self._orbit.target = [0.0, 0.0, 0.0]
         self._cam.lookAt([0.0, 0.0, 0.0])
-        self._cam.position = [0.0, 0.0, scale]
-        self._light.position = [0.0, 0.0, scale]
+        self._cam.position = cam_pos
+        self._light.position = cam_pos
 
 
         state = embed.dependency_state(self._renderer)
