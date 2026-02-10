@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meshplot"
+version = "0.3.3"
+description = "Interactive Plotting of 3D Triangle Meshes"
+readme = "README.md"
+license = "GPL-3.0-only"
+requires-python = ">=3.8"
+authors = [
+    { name = "Sebastian Koch" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "ipywidgets",
+    "pythreejs",
+    "ipython",
+]
+
+[project.urls]
+Homepage = "https://github.com/skoch9/meshplot/"
+
+[project.optional-dependencies]
+lab = [
+    "jupyterlab>=4.3.8",
+]
+
+[tool.setuptools]
+packages = ["meshplot"]
