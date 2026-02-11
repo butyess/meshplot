@@ -1,6 +1,6 @@
 from .Viewer import Viewer
 import numpy as np
-from ipywidgets import Output, HBox
+from ipywidgets import Output, HBox, VBox
 import uuid
 
 rendertype = "JUPYTER" # "OFFLINE"
@@ -76,7 +76,7 @@ class Subplot():
 
         return s
 
-def plot(v, f=None, c=None, uv=None, n=None, shading={}, plot=None, return_plot=True, filename="", texture_data=None, **kwargs):#, return_id=False):
+def plot(v, f=None, c=None, uv=None, n=None, shading={}, plot=None, return_plot=True, filename="", texture_data=None, controls=False, **kwargs):#, return_id=False):
     shading.update(kwargs)
     if not plot:
         view = Viewer(shading)
@@ -91,7 +91,11 @@ def plot(v, f=None, c=None, uv=None, n=None, shading={}, plot=None, return_plot=
         obj_id = view.add_mesh(v, f, c, uv=uv, n=n, shading=shading, texture_data=texture_data)
 
     if not plot and rendertype == "JUPYTER":
-        display(view._renderer)
+        if controls:
+            controls_widget = view._build_controls()
+            display(VBox([view._renderer, controls_widget]))
+        else:
+            display(view._renderer)
 
     if rendertype == "OFFLINE":
         view.save(filename)

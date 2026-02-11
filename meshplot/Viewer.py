@@ -373,6 +373,37 @@ class Viewer():
         else:
             return self.__add_object(point_obj)
 
+    def set_wireframe(self, oid, enabled):
+        if oid not in self.__objects:
+            return
+        obj = self.__objects[oid]
+        if obj["type"] != "Mesh":
+            return
+        mesh = obj["mesh"]
+        if enabled and obj["wireframe"] is None:
+            sh = obj["shading"]
+            wf_geometry = p3s.WireframeGeometry(mesh.geometry)
+            wf_material = p3s.LineBasicMaterial(color=sh["wire_color"], linewidth=sh["wire_width"])
+            wireframe = p3s.LineSegments(wf_geometry, wf_material)
+            mesh.add(wireframe)
+            obj["wireframe"] = wireframe
+        elif not enabled and obj["wireframe"] is not None:
+            mesh.remove(obj["wireframe"])
+            obj["wireframe"] = None
+
+    def _build_controls(self):
+        checkbox = widgets.Checkbox(value=False, description='Wireframe')
+        def on_wireframe_change(change):
+            for oid, obj in self.__objects.items():
+                if obj["type"] == "Mesh":
+                    self.set_wireframe(oid, change['new'])
+        checkbox.observe(on_wireframe_change, names='value')
+        mesh_box = widgets.VBox([checkbox])
+        accordion = widgets.Accordion(children=[mesh_box])
+        accordion.set_title(0, 'Mesh')
+        accordion.selected_index = None
+        return accordion
+
     def remove_object(self, obj_id):
         if obj_id not in self.__objects:
             print("Invalid object id. Valid ids are: ", list(self.__objects.keys()))
