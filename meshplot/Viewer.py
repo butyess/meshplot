@@ -105,7 +105,6 @@ class Viewer():
         self._orbit.target = mean
         self._cam.lookAt(mean)
         self._cam.position = cam_pos
-        self._light.position = cam_pos
 
         self._orbit.exec_three_obj_method('update')
         self._cam.exec_three_obj_method('updateProjectionMatrix')
@@ -494,7 +493,6 @@ class Viewer():
         self._orbit.target = [0.0, 0.0, 0.0]
         self._cam.lookAt([0.0, 0.0, 0.0])
         self._cam.position = cam_pos
-        self._light.position = cam_pos
 
 
         state = embed.dependency_state(self._renderer)

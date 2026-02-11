@@ -30,6 +30,7 @@ Homepage = "https://github.com/skoch9/meshplot/"
 [project.optional-dependencies]
 lab = [
     "jupyterlab>=4.3.8",
+    "trimesh>=4.11.2",
 ]
 
 [tool.setuptools]
