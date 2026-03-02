@@ -2,6 +2,7 @@ from .Viewer import Viewer
 import numpy as np
 from ipywidgets import Output, HBox, VBox
 import uuid
+import trimesh
 
 rendertype = "JUPYTER" # "OFFLINE"
 def jupyter():
@@ -78,6 +79,21 @@ class Subplot():
 
 def plot(v, f=None, c=None, uv=None, n=None, shading={}, plot=None, return_plot=True, filename="", texture_data=None, controls=False, **kwargs):#, return_id=False):
     shading.update(kwargs)
+    
+    # Check if v is a Trimesh object and extract data from it
+    if isinstance(v, trimesh.Trimesh):
+        mesh = v
+        v = mesh.vertices
+        f = mesh.faces
+        if c is None and hasattr(mesh, 'vertex_colors'):
+            c = mesh.vertex_colors
+        if uv is None and hasattr(mesh.visual, 'uv'):
+            uv = mesh.visual.uv
+        if n is None and hasattr(mesh, 'vertex_normals'):
+            n = mesh.vertex_normals
+        if texture_data is None and hasattr(mesh.visual, 'material'):
+            texture_data = mesh.visual.material
+    
     if not plot:
         view = Viewer(shading)
     else:
