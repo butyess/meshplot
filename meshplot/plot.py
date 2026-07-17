@@ -79,7 +79,7 @@ class Subplot():
 
 def plot(v, f=None, c=None, uv=None, n=None, shading={}, plot=None, return_plot=True, filename="", texture_data=None, controls=False, **kwargs):#, return_id=False):
     shading.update(kwargs)
-    
+
     # Check if v is a Trimesh object and extract data from it
     if isinstance(v, trimesh.Trimesh):
         mesh = v
@@ -93,7 +93,7 @@ def plot(v, f=None, c=None, uv=None, n=None, shading={}, plot=None, return_plot=
             n = mesh.vertex_normals
         if texture_data is None and hasattr(mesh.visual, 'material'):
             texture_data = mesh.visual.material
-    
+
     if not plot:
         view = Viewer(shading)
     else:

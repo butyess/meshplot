@@ -22,7 +22,7 @@ dependencies = [
     "ipywidgets",
     "pythreejs",
     "ipython",
-    "trimesh",
+    "trimesh[easy]",
 ]
 
 [project.urls]
